@@ -9,7 +9,7 @@ import userData from './models/user';
 
 const app = express();
 
-app.use(passport.initialize());
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 mongoose.Promise = global.Promise;
@@ -26,24 +26,36 @@ mongoose.connect(serverConfig.mongoURL, (error) => {
   userData();
 });
 
+app.use(passport.initialize());
+
+app.all('*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'accept, content-type, x-parse-application-id, x-parse-rest-api-key, x-parse-session-token');
+
+  if('OPTIONS' == req.method) {
+    res.send(200);
+  } else {
+    next();
+  }
+})
+
+import localSignupStrategy from './passport/local-signup';
+import localLoginStrategy from './passport/local-login';
+passport.use('local-signup', localSignupStrategy);
+passport.use('local-login', localLoginStrategy);
+
+
+import authCheckMiddleware from './middleware/auth-check';
+app.use('/api', authCheckMiddleware);
+
 import authRoutes from './routes/auth';
 app.use('/auth', authRoutes);
 
 import apiRoutes from './routes/api';
 app.use('/api', apiRoutes);
 
-app.all('*', function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'accept, content-type, x-parse-application-id, x-parse-rest-api-key, x-parse-session-token');
-     // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-      res.send(200);
-    }
-    else {
-      next();
-    }
-});
+
 
 app.listen(serverConfig.port, (error) => {
   if (!error) {
