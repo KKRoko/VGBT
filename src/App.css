@@ -1,0 +1,32 @@
+/* Header Component */
+.App-header {
+  background-color: #00C853;
+  padding: 15px 0 5px 50px;
+}
+
+.homepage-container {
+  display: flex;
+  height: 93vh;
+  justify-content: center;
+  align-items: center;
+  min-height: 700px;
+}
+
+.homepics-container {
+  display: flex;
+  flex-flow: wrap;
+  width: 350px;
+  margin-right: 30px;
+}
+.homepics-item {
+  margin: 9px;
+  height: 150px;
+  width: 150px;
+  border: 3px solid #FFFFFF;
+  border-radius: 5px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
