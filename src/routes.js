@@ -1,10 +1,42 @@
-import React from 'react';
-import { Route } from 'react-router';
+
 
 import App from './App';
+import LoginPage from './container/homepage/LoginPage';
+import DashboardPage from './container/DashboardPage';
 
-export default (
-  <Route path="/" component={App}>
+import Auth from './modules/auth';
 
-  </Route>
-)
+const routes = {
+  // base component (wrapper for the whole application).
+  component: App,
+  childRoutes: [
+
+    {
+      path: '/',
+      getComponent: (location, callback) => {
+        if (Auth.isUserAuthenticated()) {
+          callback(null, DashboardPage);
+        } else {
+          callback(null, App);
+        }
+      }
+    },
+        {
+      path: '/login',
+      component: LoginPage
+    },
+
+    {
+      path: '/logout',
+      onEnter: (nextState, replace) => {
+        Auth.deauthenticateUser();
+
+        // change the current URL to /
+        replace('/');
+      }
+    }
+
+  ]
+};
+
+export default routes;

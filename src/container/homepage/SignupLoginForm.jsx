@@ -1,7 +1,7 @@
 import React from 'react';
 import SignupPage from './SignupPage';
 import LoginPage from './LoginPage';
-
+import { Link } from 'react-router'
 
 
 class SignupLoginForm extends React.Component {
@@ -54,7 +54,7 @@ function LoginButton(props) {
       <div className="signup-login-options">
         <p>Have an account?
         <span className="signup-login-option" onClick={props.onClick}>
-           &nbsp;Login
+           <Link to="/login">&nbsp;Login</Link>
         </span>
         </p>
       </div>

@@ -9,27 +9,33 @@ import userData from './models/user';
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
-app.use(bodyParser.urlencoded({ extended: false }));
 mongoose.Promise = global.Promise;
-
 // MongoDB Connection
 mongoose.connect(serverConfig.mongoURL, (error) => {
   if (error) {
     console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
     throw error;
   }
-
   // feed some dummy data in DB.
   dummyData();
   userData();
 });
 
-import authRoutes from './routes/auth';
-app.use('/auth', authRoutes);
+import localSignupStrategy from './passport/local-signup';
+import localLoginStrategy from './passport/local-login';
+passport.use('local-signup', localSignupStrategy);
+passport.use('local-login', localLoginStrategy);
 
+
+import authCheckMiddleware from './middleware/auth-check';
+app.use('/api', authCheckMiddleware);
+
+import authRoutes from './routes/auth';
 import apiRoutes from './routes/api';
+app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
 
 app.all('*', function(req, res, next) {
@@ -44,6 +50,8 @@ app.all('*', function(req, res, next) {
       next();
     }
 });
+
+
 
 app.listen(serverConfig.port, (error) => {
   if (!error) {
